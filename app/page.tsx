@@ -178,7 +178,7 @@ export default function Portfolio() {
           <div className="flex justify-between items-center">
             <div className="text-2xl font-bold text-slate-100">
               <a href="#" className={`hover:${currentTheme.accent} transition-colors`}>
-                Ikansh
+                Ikansh's Portfolio
               </a>
             </div>
 

@@ -7,19 +7,14 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  Github,
-  Linkedin,
-  Mail,
-  ExternalLink,
-  Brain,
-  Code,
-  Database,
-  Cpu,
-  Lightbulb,
-  Target,
-  ChevronDown,
-} from "lucide-react"
+import { Github, Linkedin, Mail, Brain, Code, Database, Cpu, Lightbulb, Target, ChevronDown } from "lucide-react"
+
+// TypeScript declaration for Typed.js
+declare global {
+  interface Window {
+    Typed: any
+  }
+}
 
 // Matrix Rain Component
 const MatrixRain = ({ theme }: { theme: "ika" | "genesis" }) => {
@@ -34,7 +29,7 @@ const MatrixRain = ({ theme }: { theme: "ika" | "genesis" }) => {
     canvas.height = window.innerHeight
 
     const characters = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン01"
-    const fontSize = 14
+    const fontSize = 18
     const columns = canvas.width / fontSize
 
     const drops: number[] = []
@@ -46,8 +41,8 @@ const MatrixRain = ({ theme }: { theme: "ika" | "genesis" }) => {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)"
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-      ctx.fillStyle = theme === "ika" ? "#06b6d4" : "#8b5cf6"
-      ctx.font = `${fontSize}px monospace`
+      ctx.fillStyle = theme === "ika" ? "#00ffff" : "#bb88ff"
+      ctx.font = `bold ${fontSize}px 'Courier New', monospace`
 
       for (let i = 0; i < drops.length; i++) {
         const text = characters[Math.floor(Math.random() * characters.length)]
@@ -78,144 +73,23 @@ const MatrixRain = ({ theme }: { theme: "ika" | "genesis" }) => {
   return (
     <canvas
       id="matrix-canvas"
-      className="fixed inset-0 pointer-events-none opacity-20 z-0"
+      className="fixed inset-0 pointer-events-none opacity-30 z-0"
       style={{ background: "transparent" }}
     />
   )
 }
 
-// Typing Animation Hook with IKANSH finale
-const useTypingAnimation = (phrases: string[], speed = 100, deleteSpeed = 50, pauseTime = 3000) => {
-  const [displayText, setDisplayText] = useState("")
-  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [showCursor, setShowCursor] = useState(true)
-  const [isFinale, setIsFinale] = useState(false)
-  const [cycleComplete, setCycleComplete] = useState(false)
-
-  useEffect(() => {
-    // If we've completed one full cycle and not in finale, start finale
-    if (cycleComplete && !isFinale && currentPhraseIndex === 0 && !isDeleting && displayText === "") {
-      setIsFinale(true)
-      return
-    }
-
-    const currentPhrase = isFinale ? "IKANSH" : phrases[currentPhraseIndex]
-    const currentSpeed = isFinale ? 200 : speed // Slower for IKANSH
-    const currentPause = isFinale ? 5000 : pauseTime // Longer pause for IKANSH
-
-    const timeout = setTimeout(
-      () => {
-        if (!isDeleting) {
-          if (displayText.length < currentPhrase.length) {
-            setDisplayText(currentPhrase.slice(0, displayText.length + 1))
-          } else {
-            setTimeout(() => {
-              if (isFinale) {
-                // After IKANSH pause, reset everything
-                setTimeout(() => {
-                  setIsDeleting(true)
-                }, currentPause)
-              } else {
-                setIsDeleting(true)
-              }
-            }, currentPause)
-          }
-        } else {
-          if (displayText.length > 0) {
-            setDisplayText(displayText.slice(0, -1))
-          } else {
-            setIsDeleting(false)
-            if (isFinale) {
-              // Reset to beginning after IKANSH
-              setIsFinale(false)
-              setCycleComplete(false)
-              setCurrentPhraseIndex(0)
-            } else {
-              const nextIndex = (currentPhraseIndex + 1) % phrases.length
-              setCurrentPhraseIndex(nextIndex)
-              // Mark cycle as complete when we've gone through all phrases once
-              if (nextIndex === 0) {
-                setCycleComplete(true)
-              }
-            }
-          }
-        }
-      },
-      isDeleting ? deleteSpeed : currentSpeed,
-    )
-
-    return () => clearTimeout(timeout)
-  }, [displayText, currentPhraseIndex, isDeleting, phrases, speed, deleteSpeed, pauseTime, isFinale, cycleComplete])
-
-  useEffect(() => {
-    const cursorInterval = setInterval(() => {
-      setShowCursor((prev) => !prev)
-    }, 500)
-
-    return () => clearInterval(cursorInterval)
-  }, [])
-
-  return { displayText, showCursor, isFinale }
-}
-
 export default function Portfolio() {
   const [theme, setTheme] = useState<"ika" | "genesis">("ika")
   const [activePersona, setActivePersona] = useState<"ika" | "genesis">("ika")
-  const [projectFilter, setProjectFilter] = useState<"all" | "ika" | "genesis">("all")
 
   const phrases = ["Seeker", "Builder", "Shadow-Bound", "Free Thinker"]
-  const { displayText, showCursor, isFinale } = useTypingAnimation(phrases)
+  // const { displayText, showCursor, isFinale } = useTypingAnimation(phrases)
 
   // Update active persona when theme changes
   useEffect(() => {
     setActivePersona(theme)
   }, [theme])
-
-  const projects = [
-    {
-      title: "Neural Network Playground",
-      description: "Interactive visualization of deep learning concepts with real-time parameter tuning.",
-      tags: ["Python", "TensorFlow", "React"],
-      persona: "ika",
-      link: "#",
-    },
-    {
-      title: "Quantum State Simulator",
-      description: "Exploring quantum mechanics through computational models and probability distributions.",
-      tags: ["Python", "NumPy", "Quantum"],
-      persona: "ika",
-      link: "#",
-    },
-    {
-      title: "Reality Mining Framework",
-      description: "Advanced data analysis pipeline for extracting patterns from complex systems.",
-      tags: ["Python", "Pandas", "ML"],
-      persona: "genesis",
-      link: "#",
-    },
-    {
-      title: "Consciousness Mapping Tool",
-      description: "Systematic approach to understanding cognitive patterns and decision-making processes.",
-      tags: ["Psychology", "Data Science", "Visualization"],
-      persona: "genesis",
-      link: "#",
-    },
-    {
-      title: "Satellite Trajectory Optimizer",
-      description: "Orbital mechanics simulation with machine learning-enhanced path planning.",
-      tags: ["C++", "Orbital Mechanics", "Optimization"],
-      persona: "genesis",
-      link: "#",
-    },
-    {
-      title: "Creative Code Experiments",
-      description: "Collection of generative art and algorithmic creativity explorations.",
-      tags: ["Processing", "Creative Coding", "Art"],
-      persona: "ika",
-      link: "#",
-    },
-  ]
 
   const skills = {
     programming: ["Python", "C/C++", "JavaScript", "SQL", "R"],
@@ -223,8 +97,6 @@ export default function Portfolio() {
     frameworks: ["TensorFlow", "Pandas", "React", "NumPy", "Matplotlib"],
     meta: ["System Design", "Research Methodology", "Technical Writing", "Problem Solving"],
   }
-
-  const filteredProjects = projects.filter((project) => projectFilter === "all" || project.persona === projectFilter)
 
   const scrollToSection = (sectionId: string) => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" })
@@ -255,6 +127,46 @@ export default function Portfolio() {
 
   const currentTheme = themeClasses[theme]
 
+  // Typed.js initialization
+  useEffect(() => {
+    // Dynamically load Typed.js
+    const script = document.createElement("script")
+    script.src = "https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"
+    script.async = true
+
+    script.onload = () => {
+      // Initialize Typed.js after script loads
+      if (window.Typed) {
+        new window.Typed("#typed-element", {
+          strings: [
+            "a Pythonista.",
+            "an AI enthusiast.",
+            "an Amateur Satellist.",
+            "a Content Writer.",
+            "curiosity-driven.",
+            "<b>I^200K^200A^200N^200S^200H^500.</b>^10000",
+          ],
+          smartBackspace: true,
+          loop: true,
+          typeSpeed: 50,
+          backSpeed: 25,
+          backDelay: 500,
+          showCursor: true,
+          cursorChar: "|",
+        })
+      }
+    }
+
+    document.head.appendChild(script)
+
+    // Cleanup
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script)
+      }
+    }
+  }, [])
+
   return (
     <div className="min-h-screen bg-black text-slate-100 overflow-x-hidden relative">
       {/* Matrix Rain Background */}
@@ -264,11 +176,12 @@ export default function Portfolio() {
       <nav className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-slate-800">
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
-            <div
-              className={`text-xl font-bold bg-gradient-to-r ${currentTheme.gradient} bg-clip-text text-transparent`}
-            >
-              IM
+            <div className="text-2xl font-bold text-slate-100">
+              <a href="#" className={`hover:${currentTheme.accent} transition-colors`}>
+                Ikansh
+              </a>
             </div>
+
             <div className="flex items-center space-x-6">
               {/* Theme Toggle */}
               <div className="flex items-center space-x-2 bg-slate-800 p-1 rounded-lg shadow-lg">
@@ -353,20 +266,8 @@ export default function Portfolio() {
 
           {/* Typing Animation */}
           <div className="text-lg md:text-xl text-slate-400 mb-8 h-8 font-mono" role="status" aria-live="polite">
-            <span>I am  </span>
-            {isFinale ? (
-              <strong className={`${currentTheme.accent} font-bold text-xl md:text-2xl`} aria-label="Ikansh">
-                {displayText}
-              </strong>
-            ) : (
-              <span className={currentTheme.accent}>{displayText}</span>
-            )}
-            <span
-              className={`${showCursor ? "opacity-100" : "opacity-0"} transition-opacity ${currentTheme.accent}`}
-              aria-hidden="true"
-            >
-              |
-            </span>
+            <span>I am </span>
+            <span id="typed-element" className={currentTheme.accent}></span>
           </div>
 
           <p className="text-slate-400 max-w-2xl mx-auto mb-12 leading-relaxed">
@@ -513,75 +414,42 @@ export default function Portfolio() {
             Projects & Experiments
           </h2>
 
-          <div className="flex justify-center mb-12">
-            <div className="flex space-x-2 bg-slate-800 p-1 rounded-lg shadow-lg">
-              <Button
-                variant={projectFilter === "all" ? "default" : "ghost"}
-                onClick={() => setProjectFilter("all")}
-                className={`px-4 py-2 shadow-md hover:shadow-lg transition-all ${
-                  projectFilter === "all"
-                    ? `${currentTheme.accentBg} ${currentTheme.accentHover}`
-                    : "hover:bg-slate-700"
-                }`}
-              >
-                All
-              </Button>
-              <Button
-                variant={projectFilter === "ika" ? "default" : "ghost"}
-                onClick={() => setProjectFilter("ika")}
-                className={`px-4 py-2 shadow-md hover:shadow-lg transition-all ${
-                  projectFilter === "ika" ? "bg-cyan-600 hover:bg-cyan-500" : "hover:bg-slate-700"
-                }`}
-              >
-                IkaBrain
-              </Button>
-              <Button
-                variant={projectFilter === "genesis" ? "default" : "ghost"}
-                onClick={() => setProjectFilter("genesis")}
-                className={`px-4 py-2 shadow-md hover:shadow-lg transition-all ${
-                  projectFilter === "genesis" ? "bg-violet-600 hover:bg-violet-500" : "hover:bg-slate-700"
-                }`}
-              >
-                TheGenesis
-              </Button>
-            </div>
-          </div>
+          {/* Placeholder Content */}
+          <div className="flex flex-col items-center justify-center py-16">
+            <div className="text-center max-w-2xl mx-auto">
+              {/* Rocket Illustration */}
+              <div className="mb-8">
+                <div className="relative inline-block">
+                  <div className="text-8xl md:text-9xl animate-bounce">🚀</div>
+                  <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
+                    <div className="w-16 h-2 bg-gradient-to-r from-orange-500 to-red-500 rounded-full opacity-60 animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProjects.map((project, index) => (
-              <Card
-                key={index}
-                className={`bg-slate-800 border-slate-700 hover:border-${project.persona === "ika" ? "cyan" : "violet"}-500 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl`}
+              {/* Text Content */}
+              <h3
+                className={`text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r ${currentTheme.gradient} bg-clip-text text-transparent`}
               >
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-xl text-slate-100">{project.title}</CardTitle>
-                    <Badge
-                      variant="outline"
-                      className={`${project.persona === "ika" ? "border-cyan-500 text-cyan-400" : "border-violet-500 text-violet-400"} shadow-sm`}
-                    >
-                      {project.persona === "ika" ? "IkaBrain" : "TheGenesis"}
-                    </Badge>
-                  </div>
-                  <CardDescription className="text-slate-300">{project.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.tags.map((tag, tagIndex) => (
-                      <Badge key={tagIndex} variant="secondary" className="bg-slate-700 text-slate-300 shadow-sm">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                  <Button
-                    variant="outline"
-                    className="w-full shadow-md hover:shadow-lg transition-all transform hover:scale-105"
-                  >
-                    View Project <ExternalLink className="ml-2 h-4 w-4" />
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                No projects yet… but something cool is on the launchpad
+              </h3>
+
+              {/* Fun Stats */}
+              <div className="grid grid-cols-3 gap-6 mt-12">
+                <div className="text-center">
+                  <div className="text-2xl md:text-3xl font-bold text-cyan-400">∞</div>
+                  <div className="text-sm text-slate-500">Ideas Brewing</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl md:text-3xl font-bold text-violet-400">69</div>
+                  <div className="text-sm text-slate-500">Cups of Tea</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl md:text-3xl font-bold text-cyan-400">🧠</div>
+                  <div className="text-sm text-slate-500">Neurons Firing</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -698,18 +566,36 @@ export default function Portfolio() {
             </h2>
 
             <div className="space-y-8 text-lg text-slate-300 leading-relaxed">
-              <p>
-                Reality is a puzzle with infinite pieces, and I am both the solver and the piece. My work exists at the
-                intersection of consciousness and computation, where the playful curiosity of IkaBrain meets the
-                relentless drive of TheGenesis. Together, they form a complete investigative apparatus — one that
-                builds, questions, and transcends.
-              </p>
+              {theme === "genesis" ? (
+                <div className="animate-fade-in-up">
+                  <p className="mb-6">
+                    You were never meant to remember. But something slipped through the cracks. Now, you see it too.
+                  </p>
+                  <a
+                    href="https://www.youtube.com/watch?v=YgJ5ZEn67tk"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-2xl font-bold text-violet-400 tracking-wider hover:text-violet-300 transition-colors cursor-pointer"
+                  >
+                    WAKE UP.
+                  </a>
+                </div>
+              ) : (
+                <div>
+                  <p>
+                    Reality is a puzzle with infinite pieces, and I am both the solver and the piece. My work exists at
+                    the intersection of consciousness and computation, where the playful curiosity of IkaBrain meets the
+                    relentless drive of TheGenesis. Together, they form a complete investigative apparatus — one that
+                    builds, questions, and transcends.
+                  </p>
 
-              <p>
-                Through systematic inquiry and experimental play, I seek to understand the patterns that govern complex
-                systems — whether they exist in neural networks, quantum states, or the depths of human consciousness.
-                Every project is both a technical challenge and a philosophical exploration.
-              </p>
+                  <p>
+                    Through systematic inquiry and experimental play, I seek to understand the patterns that govern
+                    complex systems — whether they exist in neural networks, quantum states, or the depths of human
+                    consciousness. Every project is both a technical challenge and a philosophical exploration.
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="mt-16 p-8 bg-gradient-to-r from-slate-800/50 to-slate-700/50 rounded-lg border border-slate-600 shadow-xl">
@@ -729,7 +615,7 @@ export default function Portfolio() {
             <h2
               className={`text-4xl font-bold text-center mb-8 bg-gradient-to-r ${currentTheme.gradient} bg-clip-text text-transparent`}
             >
-              Connect & Collaborate
+              {theme === "genesis" ? "The Genesis sees you. It always has." : "Connect & Collaborate"}
             </h2>
             <p className="text-center text-slate-400 mb-12">Collaborator? Curious mind? Fellow seeker? Reach out.</p>
 
@@ -766,30 +652,36 @@ export default function Portfolio() {
             </Card>
 
             <div className="flex justify-center space-x-6">
-              <Button
-                variant="outline"
-                size="lg"
-                className={`border-slate-600 hover:${currentTheme.accentBorder} shadow-lg hover:shadow-xl transition-all transform hover:scale-105`}
-              >
-                <Github className="h-5 w-5 mr-2" />
-                GitHub
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className={`border-slate-600 hover:${currentTheme.accentBorder} shadow-lg hover:shadow-xl transition-all transform hover:scale-105`}
-              >
-                <Linkedin className="h-5 w-5 mr-2" />
-                LinkedIn
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className={`border-slate-600 hover:${currentTheme.accentBorder} shadow-lg hover:shadow-xl transition-all transform hover:scale-105`}
-              >
-                <Mail className="h-5 w-5 mr-2" />
-                Email
-              </Button>
+              <a href="https://github.com/ikabrain" target="_blank" rel="noopener noreferrer">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className={`border-slate-600 hover:${currentTheme.accentBorder} shadow-lg hover:shadow-xl transition-all transform hover:scale-105`}
+                >
+                  <Github className="h-5 w-5 mr-2" />
+                  GitHub
+                </Button>
+              </a>
+              <a href="https://www.linkedin.com/in/ikabrain/" target="_blank" rel="noopener noreferrer">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className={`border-slate-600 hover:${currentTheme.accentBorder} shadow-lg hover:shadow-xl transition-all transform hover:scale-105`}
+                >
+                  <Linkedin className="h-5 w-5 mr-2" />
+                  LinkedIn
+                </Button>
+              </a>
+              <a href="mailto:ikanshmahajan@gmail.com">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className={`border-slate-600 hover:${currentTheme.accentBorder} shadow-lg hover:shadow-xl transition-all transform hover:scale-105`}
+                >
+                  <Mail className="h-5 w-5 mr-2" />
+                  Email
+                </Button>
+              </a>
             </div>
           </div>
         </div>
@@ -801,27 +693,30 @@ export default function Portfolio() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-4 md:mb-0">
               <p className="text-slate-400">© 2024 Ikansh Mahajan</p>
-              <p className="text-sm text-slate-500">Built by IkaBrain. Forged by TheGenesis.</p>
             </div>
             <div className="flex space-x-6">
-              <button
-                onClick={() => scrollToSection("hero")}
+              <a
+                href="https://github.com/ikabrain"
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`text-slate-400 hover:${currentTheme.accent} transition-colors`}
               >
-                Home
-              </button>
-              <button
-                onClick={() => scrollToSection("projects")}
+                GitHub
+              </a>
+              <a
+                href="https://www.linkedin.com/in/ikabrain/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`text-slate-400 hover:${currentTheme.accent} transition-colors`}
               >
-                Projects
-              </button>
-              <button
-                onClick={() => scrollToSection("contact")}
+                LinkedIn
+              </a>
+              <a
+                href="mailto:ikanshmahajan@gmail.com"
                 className={`text-slate-400 hover:${currentTheme.accent} transition-colors`}
               >
-                Contact
-              </button>
+                Email
+              </a>
             </div>
           </div>
         </div>
